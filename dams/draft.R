@@ -39,19 +39,19 @@ leaflet(damssf_reproj) %>%
 # specific icons
 
 leafIcons <- icons(
-  iconUrl = ifelse(damssf$obs_height>10 ,
+  iconUrl = ifelse(damssf_reproj$obs_height>10 ,
                    "www/dam.png",
                    "www/smalldam.png"
   ),
-  iconWidth = ifelse(damssf$obs_height>10 , 25,20),
-  iconHeight = ifelse(damssf$obs_height>10 ,20,10),
+  iconWidth = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) , 25,20),
+  iconHeight = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) ,20,10),
   iconAnchorX = 0, iconAnchorY = 20,
-  shadowUrl =  ifelse(damssf$obs_height>10 ,"www/damshadow.png",""),
+  shadowUrl =  ifelse(damssf_reproj$obs_height&!is.na(damssf_reproj$obs_height)>10 ,"www/damshadow.png",""),
    shadowWidth = 40, shadowHeight = 10,
    shadowAnchorX = 5, shadowAnchorY =0
 )
 
-leaflet(damssf_reproj[1:100,]) %>% 
+leaflet(damssf_reproj[1:200,]) %>% 
   addTiles() %>% 
   addMarkers(icon = leafIcons)
 
