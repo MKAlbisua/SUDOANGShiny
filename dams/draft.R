@@ -1,0 +1,7 @@
+require(leaflet)
+load(file="c:/temp/DamSpain.Rdata")
+require(sf)
+damssf <- st_as_sf(dams, coords = c("X", "Y"), crs = 3035)
+damssf_reproj <- st_transform(damssf, 4326)
+plot(damssf_reproj)
+leaflet(damssf_reproj)%>%addCircleMarkers()%>% addTiles()
