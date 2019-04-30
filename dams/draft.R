@@ -1,5 +1,6 @@
 require(leaflet)
-load(file="c:/temp/DamSpain.Rdata")
+#load(file="c:/temp/DamSpain.Rdata")
+load("data/DamSpain.Rdata")
 require(sf)
 damssf <- st_as_sf(dams, coords = c("X", "Y"), crs = 3035)
 damssf_reproj <- st_transform(damssf, 4326)
