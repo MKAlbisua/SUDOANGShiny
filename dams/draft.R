@@ -47,8 +47,8 @@ leafIcons <- icons(
   iconHeight = ifelse(damssf$obs_height>10 ,20,10),
   iconAnchorX = 0, iconAnchorY = 20,
   shadowUrl =  ifelse(damssf$obs_height>10 ,"www/damshadow.png",""),
-   shadowWidth = 25, shadowHeight = 10,
-   shadowAnchorX = -5, shadowAnchorY =0
+   shadowWidth = 40, shadowHeight = 10,
+   shadowAnchorX = 5, shadowAnchorY =0
 )
 
 leaflet(damssf_reproj[1:100,]) %>% 
