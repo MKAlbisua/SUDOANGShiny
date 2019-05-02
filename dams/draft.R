@@ -1,4 +1,5 @@
 #load(file="c:/temp/DamSpain.Rdata")
+# setwd("C:/Users/cedric.briand/Documents/GitHub/SUDOANGShiny/dams")
 load("data/DamSpain.Rdata")
 head(dams)
 str(dams)
@@ -11,6 +12,7 @@ damssf <- st_as_sf(dams, coords = c("X", "Y"), crs = 3035)
 #in lat-long using WGS 84 (a.k.a. EPSG:4326)
 
 require(leaflet)
+packageVersion("leaflet") # 2.0.2
 damssf_reproj <- st_transform(damssf, 4326)
 # plot(damssf_reproj)
 
@@ -26,10 +28,40 @@ leaflet(damssf_reproj) %>%
 )
 
 # Pop up list
+# Cedric : Maria is this working ? It doesn't in my computer
 leaflet(damssf_reproj) %>% 
   addTiles() %>% 
   addCircleMarkers( #addMarkers
     clusterOptions = markerClusterOptions(), popup = ~ obs_name
+<<<<<<< HEAD
   )
 
 
+=======
+  ) 
+
+
+# specific icons
+
+leafIcons <- icons(
+  iconUrl = ifelse(damssf_reproj$obs_height>10 ,
+                   "www/dam.png",
+                   "www/smalldam.png"
+  ),
+  iconWidth = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) , 25,20),
+  iconHeight = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) ,20,10),
+  iconAnchorX = 0, iconAnchorY = 20,
+  shadowUrl =  ifelse(damssf_reproj$obs_height&!is.na(damssf_reproj$obs_height)>10 ,"www/damshadow.png",""),
+   shadowWidth = 40, shadowHeight = 10,
+   shadowAnchorX = 5, shadowAnchorY =0
+)
+
+leaflet(damssf_reproj[1:200,]) %>% 
+  addTiles() %>% 
+  addMarkers(icon = leafIcons)
+
+
+leaflet(damssf_reproj[damssf_reproj$obs_height>10,]) %>% 
+  addTiles() %>% 
+  addMarkers(icon = leafIcons)
+>>>>>>> 31e3691533897b87294330de0297d8b152b2e807
