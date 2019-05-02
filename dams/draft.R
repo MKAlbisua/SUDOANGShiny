@@ -29,16 +29,42 @@ leaflet(damssf_reproj) %>%
 
 # Pop up list
 # Cedric : Maria is this working ? It doesn't in my computer
+# Maria : as talked, it is because most of the obs_name  == <NA>
 leaflet(damssf_reproj) %>% 
   addTiles() %>% 
   addCircleMarkers( #addMarkers
     clusterOptions = markerClusterOptions(), popup = ~ obs_name
-<<<<<<< HEAD
   )
 
 
-=======
-  ) 
+# Popup list_2
+# Maria: MM& Cb; Based on the variables, we should change all NA to -> "No available"
+
+# $obs_name
+damssf_reproj$obs_name <-as.factor(damssf_reproj$obs_name)
+levels <- levels(damssf_reproj$obs_name)
+levels[length(levels) + 1] <- "No available"
+damssf_reproj$obs_name <- factor(damssf_reproj$obs_name, levels = levels)
+damssf_reproj$obs_name[is.na(damssf_reproj$obs_name)] <- "No available"
+
+
+# Maria: MM&CB, which variables do you want to appear in the dams popup?
+
+popuplist = paste0( "Obstacle name: "
+                    , damssf_reproj$obs_name
+                    , "<br>"
+                    ,"Obstacle height: "
+                    , damssf_reproj$obs_height
+                    , "<br>"
+                    , "Data source: "
+                    , damssf_reproj$datasource
+)
+
+leaflet(damssf_reproj) %>% 
+  addTiles() %>% 
+  addCircleMarkers( #addMarkers
+    clusterOptions = markerClusterOptions(), popup = popuplist
+  )
 
 
 # specific icons
@@ -64,4 +90,11 @@ leaflet(damssf_reproj[1:200,]) %>%
 leaflet(damssf_reproj[damssf_reproj$obs_height>10,]) %>% 
   addTiles() %>% 
   addMarkers(icon = leafIcons)
->>>>>>> 31e3691533897b87294330de0297d8b152b2e807
+
+# Maria: Popup also works.
+leaflet(damssf_reproj) %>% 
+  addTiles() %>% 
+  addMarkers( 
+    clusterOptions = markerClusterOptions(),icon = leafIcons, popup = popuplist
+  )
+
