@@ -30,4 +30,6 @@ leaflet(damssf_reproj) %>%
   addTiles() %>% 
   addCircleMarkers( #addMarkers
     clusterOptions = markerClusterOptions(), popup = ~ obs_name
-  ) 
+  )
+
+
