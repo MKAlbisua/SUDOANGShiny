@@ -59,3 +59,4 @@ leaflet(damssf_reproj[1:200,]) %>%
 leaflet(damssf_reproj[damssf_reproj$obs_height>10,]) %>% 
   addTiles() %>% 
   addMarkers(icon = leafIcons)
+
