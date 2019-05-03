@@ -103,6 +103,28 @@ leaflet(damssf_reproj) %>%
   )
 
 
+# case_when instead of ifelse
 
-
+library(dplyr)
+leafIcons = icons(
+  iconUrl =  case_when(
+              damssf_reproj$obs_height > 10  ~ "www/dam.png",
+              damssf_reproj$obs_height == 0  ~ "www/greendam.png",
+              TRUE ~  "www/smalldam.png"), 
+    iconWidth = case_when(
+              damssf_reproj$obs_height > 10 ~  25,
+              damssf_reproj$obs_height == 0 ~ 25,
+              TRUE ~ 20),
+    iconHeight = case_when(
+              damssf_reproj$obs_height > 10 ~  20,
+              damssf_reproj$obs_height == 0 ~ 20,
+              TRUE ~ 10),
+    iconAnchorX = 0, iconAnchorY = 20,
+  shadowUrl = case_when(
+              damssf_reproj$obs_height > 10  ~ "www/damshadow.png",
+              damssf_reproj$obs_height == 0  ~ "www/damshadow.png",
+              TRUE ~ ""),
+    shadowWidth = 40,
+    shadowHeight = 10,
+    shadowAnchorX = 5, shadowAnchorY =0)
 
