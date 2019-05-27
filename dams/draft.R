@@ -216,6 +216,7 @@ l <- leaflet() %>% addTiles()
 # Maria: popuplist not working with layercontrol
 # Solved with: popuplist_2
 
+
 dams.spain$popuplist.2 <-paste0( "Obstacle name: "
                     , damssf_reproj$obs_name
                     , "<br>"
@@ -333,7 +334,16 @@ leafIcons = icons(
     dams.spain$obs_height > 10 ~  30,
     dams.spain$obs_height < 10 ~  25,
     TRUE ~ 25),
-  iconAnchorX = 0, iconAnchorY = 20,
+# =======
+# leafIcons <- icons(
+#   iconUrl = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) ,
+#                    "www/dam.png",
+#                    "www/smalldam.png"
+#   ),
+#   iconWidth = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) , 25,16),
+#   iconHeight = ifelse(damssf_reproj$obs_height>10&!is.na(damssf_reproj$obs_height) ,20,10),
+# >>>>>>> c4058976768877c499e9773307bae5c7c8df403f
+#   iconAnchorX = 0, iconAnchorY = 20,
 )
 
 ## Maria: Popup also works.(refresh popolist)
@@ -447,10 +457,6 @@ dams.spain$type<-revalue(dams.spain$type, c("dam"="Dam > 10m", "greendam"="Dam >
                            "greensmall" = "Dam < 10m with eel pass", "smalldam" = "Dam < 10m"))
 levels(as.factor(dams.spain$obs_presence_eel_pass))
 save(dams.spain, file = "dams.spain.RData")
-
-
-
-
 
 
 
