@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.1 r15371"
+   sodipodi:docname="dam_icon.svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4548">
+      <stop
+         style="stop-color:#00ffff;stop-opacity:1"
+         offset="0"
+         id="stop4544" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="1"
+         id="stop4546" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4548"
+       id="linearGradient4550"
+       x1="96.351707"
+       y1="37.13525"
+       x2="83.46846"
+       y2="74.088539"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0002237,0,0,0.96207162,-0.02006074,3.2962459)" />
+    <linearGradient
+       gradientTransform="matrix(1.0002463,0,0,0.95827892,-22.410167,1.6414871)"
+       inkscape:collect="always"
+       xlink:href="#linearGradient4548"
+       id="linearGradient4550-9"
+       x1="96.351707"
+       y1="37.13525"
+       x2="83.46846"
+       y2="74.088539"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       gradientTransform="matrix(1.1138194,0,0,0.87830198,-54.018959,3.8658827)"
+       inkscape:collect="always"
+       xlink:href="#linearGradient4548"
+       id="linearGradient4550-4"
+       x1="96.351707"
+       y1="37.13525"
+       x2="83.46846"
+       y2="74.088539"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="1013.679"
+     inkscape:cy="1019.509"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.18819471px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 89.262979,111.0411 53.938471,-8.64323 h 7.50987 l -4.91031,1.50145 48.81411,0.37536 4.62147,-1.87681 6.06566,0.12512 -48.52527,21.52081 v 0 L 86.559805,123.758 43.002571,117.55557 Z"
+       id="path4593"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccc"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:#1a1a1a;stroke:#000000;stroke-width:0.24921671px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 14.363095,77.003524 27.970238,-51.978709 10.394344,-0.167673 -0.566963,5.19787 60.287206,0.167675 2.83482,-4.694851 7.37053,1.006039 4.91369,64.218856 -30.049104,-0.670692 z"
+       id="path4496"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:url(#linearGradient4550);fill-opacity:1;stroke:#000000;stroke-width:0.26210958px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 96.353202,39.023016 c 0,0 0,0 6.546848,0 -6.09388,10.639286 -12.566569,37.184854 -14.548527,47.415069 -3.293008,2.415923 -4.445326,-6.764717 -12.002521,-0.578234 0.626339,-30.049418 20.0042,-46.836835 20.0042,-46.836835 z"
+       id="path4498-0-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:url(#linearGradient4550-9);fill-opacity:1;stroke:#000000;stroke-width:0.2615954px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 73.965274,37.227413 c 0,0 0,0 6.546995,0 -6.094017,10.597343 -12.566852,37.038264 -14.548855,47.22815 -3.293082,2.4064 -4.445426,-6.73805 -12.002792,-0.575954 C 54.586975,53.94865 73.965274,37.227413 73.965274,37.227413 Z"
+       id="path4498-0-7-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:url(#linearGradient4550-4);fill-opacity:1;stroke:#000000;stroke-width:0.26427737px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 53.299441,36.481845 c 0,0 0,0 7.290373,0 -6.785962,9.7129 -13.993756,33.94709 -16.200805,43.286538 -3.666996,2.205565 -4.950182,-6.175699 -13.365651,-0.527886 0.697473,-27.432951 22.276083,-42.758652 22.276083,-42.758652 z"
+       id="path4498-0-7-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:#333333;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 146.4637,26.523238 0.26727,18.976136 44.09947,0.534538 -0.26727,-19.243405 z"
+       id="path4604"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\cedric.briand\Documents\GitHub\SUDOANGShiny\dams\www\smalldam.png"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:#1a1a1a;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 190.56317,26.790507 6.1472,-3.207234 0.26727,17.105248 -6.1472,5.345391"
+       id="path4606"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\cedric.briand\Documents\GitHub\SUDOANGShiny\dams\www\smalldam.png"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 196.71037,23.583273 -6.1472,3.207234"
+       id="path4610"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\cedric.briand\Documents\GitHub\SUDOANGShiny\dams\www\smalldam.png"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+    <path
+       style="fill:#cccccc;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 146.4637,26.523238 11.34136,-3.366989 38.90531,0.427024 -6.1472,3.207234"
+       id="path4612"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\cedric.briand\Documents\GitHub\SUDOANGShiny\dams\www\smalldam.png"
+       inkscape:export-xdpi="18"
+       inkscape:export-ydpi="18" />
+  </g>
+</svg>
