@@ -509,6 +509,7 @@ dams.spain.coord <- dams.spain %>%
 dams.spain.coord$lat<- as.character(dams.spain.coord$lat)
 dams.spain.coord$long <- as.character(dams.spain.coord$long)
 
+
 st_geometry(dams.spain.coord) <- NULL
 
 #dams.spain.coord[dams.spain.coord$long ==  "0.689496604406601",]
@@ -606,5 +607,49 @@ leaflet() %>%
 
 
 
+## Add url for google maps
+
+# load("data/dams.spain.RData") # In GITHUB/SUDOANG Shiny/dams/dams/data
+# load("data/DamSpain.RData") # In GITHUB/SUDOANG Shiny/dams/dams/data
+# names(dams)
+# googlemapcoords<-dams[, 18]
+# googlemapcoords<-as.data.frame(googlemapcoords)
+# googlemapcoords$googlemapcoords <- as.character(googlemapcoords$googlemapcoords)
+# dams.spain<-st_sf(data.frame(dams.spain, googlemapcoords))
+# dams.spain<-dams.spain[, c(1:17,25,18:24)]
+# save(dams.spain, file="dams.spain.RData")
 
 
+library(shiny)
+library(shinyjs)
+# define js function for opening urls in new tab/window
+
+js_code <- "
+shinyjs.browseURL = function(url) {
+  window.open(url,'_blank');
+}
+"
+
+URLs <- c("http://www.google.com", "http://www.stackoverflow.com")
+
+ui <- fluidPage(
+  # set up shiny js to be able to call our browseURL function
+  useShinyjs(),
+  extendShinyjs(text = js_code, functions = 'browseURL'),
+  
+  actionButton(
+    "click",
+    "Click here to open several browser tabs"
+  )
+)
+
+server <- function(input, output){
+  observeEvent(input$click, {
+    for (i in URLs){
+      js$browseURL(i)
+      Sys.sleep(1)                #Short delay of 1 second
+    }
+  })
+}
+
+shinyApp(ui, server)
