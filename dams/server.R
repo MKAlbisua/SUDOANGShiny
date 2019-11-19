@@ -23,7 +23,17 @@ library(leafem)
 ## ****************************
 
 load("data/dams.spain.Rdata")
+load("data/altitude.spain.RData")
 
+## ****************************
+## Function for url
+## ****************************
+
+js_code <- "
+shinyjs.browseURL = function(url) {
+  window.open(url,'_blank');
+}
+"
 
 ## ****************************
 ## server
@@ -38,12 +48,12 @@ function(input, output, session) {
   ##-------
   ## show/hide app
   ##-------
-  
+ 
   observeEvent(input$okpassword, {
     load("commentsTable.RData")
     #if (nrow(subset(users, user==input$user & password==input$pass))!=0){
     if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
-      shinyjs::show("myapp", FALSE)
+      #shinyjs::show("myapp", FALSE)
       shinyjs::hide("passScreen", FALSE)
     }
   })
@@ -65,6 +75,11 @@ function(input, output, session) {
       showModal(modalDialog(paste("Welcome", input$user)))
   })
   
+  ##-------
+  ## logout
+  ##-------
+  
+
   ##-------
   ## Register
   ##-------
@@ -108,12 +123,58 @@ function(input, output, session) {
     save(commentsTable, file="commentsTable.RData")
   })
   
+  ## ********************************************************************************************************************
+  ## README
+  ## ********************************************************************************************************************
+  
+  output$readmeUi <- renderUI({
+    req(input$okpassword)
+    load("commentsTable.RData")
+    if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
+      includeHTML ("data/ReadmeSUDOANG.txt")
+    }
+  })
   
   
   
   ## ********************************************************************************************************************
   ## MAP BOX
   ## ********************************************************************************************************************
+  
+  
+  output$mapUi <- renderUI ({
+    req(input$okpassword)
+    load("commentsTable.RData")
+    if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
+          fluidRow(
+          column(width = 8,
+               box(width = NULL, status = "primary", solidHeader = TRUE,
+                   leafletOutput("map", height = 800)
+               )),
+          column (width = 4,
+               box(id ="tablebox", width = NULL,status = "primary", title = "Table edits",
+                   #tableOutput("table")
+                   rHandsontableOutput("table"),
+                   br(),
+                   actionButton("saveBtn", "Save edits"),
+                   extendShinyjs(text = js_code, functions = 'browseURL'),
+                   actionButton ("google", "Google maps")
+                   #actionButton("google", "Google Maps", onclick ="window.open('http://google.com', '_blank')")
+                   #downloadButton("downloadExcelSheet", "Send Data"),
+                   #verbatimTextOutput("print")
+               ),
+               box(id ="tablebox2", width = NULL,status = "primary", title = "Table add new ",
+                   #tableOutput("table")
+                   rHandsontableOutput("table2"),
+                   br(),
+                   actionButton("saveBtn2", "Save new")
+                   )
+        )
+      )
+    }
+  })
+  
+  
   
   ##-------
   ## map
@@ -123,6 +184,8 @@ function(input, output, session) {
   
   ## Color palette
   pal<-colorFactor("RdBu", levels(dams.spain$type))
+  pal2<-colorFactor("RdBu", levels(altitude.spain$DELTACLASS))
+  
 
   ## Poplist
   dams.spain$popuplist.2 <-paste0( "Obstacle name: "
@@ -143,7 +206,10 @@ function(input, output, session) {
 
   ## Map
   l <- leaflet() %>% addTiles() %>%
-    setView(lng = -5,lat =  41, zoom = 6) %>% addMouseCoordinates() %>% addScaleBar ("bottomleft")
+    setView(lng = -5,lat =  41, zoom = 6) %>% addMouseCoordinates() %>% addScaleBar ("bottomleft") %>%
+    addPolylines(data = altitude.spain, color = ~ pal2(DELTACLASS), weight = 2) %>% #weight = 5 by default; it makes narrower the polyline.
+    addTiles()%>%
+    addLegend("topleft", title = "Accumulated height (m)", pal = pal2, values = levels(altitude.spain$DELTACLASS))
   
 
   ## layer control
@@ -221,18 +287,16 @@ function(input, output, session) {
   
   
   ## variable into the editable table
-  dams.spain.coord<-dams.spain.coord[,c(24:25, 8, 16, 4:6, 10,19,22,21)]
-    
+  dams.coord<-dams.spain.coord[,c(25:26, 8, 16, 4:6, 10,19,22,21)]
+  
   
   ## Reactive data to click on map
   dam <- eventReactive(input$map_marker_click, {
     click <- input$map_marker_click
-    dam <-dams.spain.coord[dams.spain.coord$lat == click$lat & dams.spain.coord$long ==click$lng,]  
+    dam <-dams.coord[dams.coord$lat == click$lat & dams.coord$long ==click$lng,]  
     dam <- dam [,]
   })
   
-
-
   ## Returns rhandsontable type objetc - editable excel type grid data
   output$table <-renderRHandsontable({
     rhandsontable(t(dam()), rowHeaderWidth = 200)%>%
@@ -246,7 +310,7 @@ function(input, output, session) {
                       file = "data/databaseedits.csv", 
                       append = T, row.names = F, sep = ",", col.names = F))
    
-   
+      
    ## rective data with new dams/markers to the map
    val<-eventReactive(input$map_draw_new_feature,{
       feature <- input$map_draw_new_feature
@@ -284,5 +348,27 @@ function(input, output, session) {
 
 # hot_to_r converst the rhandsontable to R object
 # append = T, bind different edits to the same file
+   
+   
+   ## ********************************************************************************************************************
+   ## Google maps 
+   ## ********************************************************************************************************************
+   
+   ## reactive url data.frame
+   dams.spain.url<-dams.spain.coord[,c(24:26)]
+   
+   ## Reactive url to click on map
+   url <- eventReactive(input$map_marker_click, {
+     click <- input$map_marker_click
+     url <-dams.spain.url[dams.spain.url$lat == click$lat & dams.spain.url$long == click$lng,]
+     url <- url [,]
+   })
+
+
+   ## Open the browser with the url
+   observeEvent(input$google, {
+       js$browseURL(url()$googlemapcoords)
+       Sys.sleep(1)                #Short delay of 1 second
+   })
 
 }# end of the server
