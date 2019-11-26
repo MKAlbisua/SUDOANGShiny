@@ -390,15 +390,31 @@ function(input, output, session) {
                 )),
          column (width = 4,
                  box(id ="tablebox.R", width = NULL,status = "primary", title = "Residual edits",
-                  radioButtons ("rad", "Plot",  c("a"="1", "b"="2")),   
+                  radioButtons ("dataset", "Plot",  
+                                choices = c("Presence/absence","Density" )),   
                   sliderInput("res", "Residuals", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
                                               value = round(range(delta.coord$rdelta), digits=2), step = 0.1),
                   textAreaInput("caption", "", rows = 5, "Type here..." #, width = "1000px"
                                     ),
-                  helpText("For example: Wrong location, eels transported, etc."))
+                  helpText("For example: Wrong location, eels transported, etc."), 
+                  actionButton("update", "Update View"))
                  )
          )
      }
    })
+   
+   
+   # Return the requested dataset ----
+   # updated when the user clicks the button
+   
+   residuals<- eventReactive(input$update, {
+     switch(input$dataset,
+            "Presence/absence" = delta,
+            "Density" = deltagamma
+            )
+   }, ignoreNULL = FALSE)
+   
+   
+   
 
 }# end of the server
