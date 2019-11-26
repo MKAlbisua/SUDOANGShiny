@@ -22,7 +22,7 @@ library(leafem)
 ## Data
 ## ****************************
 
-load("data/dams.spain.Rdata")
+load("data/dams.spain.RData")
 load("data/altitude.spain.RData")
 
 ## ****************************
@@ -91,7 +91,7 @@ shinyjs.browseURL = function(url) {
               ),
       
       ##-----------
-      ## Map
+      ## Map dams
       ##-----------
       tabItem(tabName = "map",uiOutput("mapUi")
   #     fluidRow(
@@ -119,7 +119,13 @@ shinyjs.browseURL = function(url) {
   #              )
   #   )
   # )
-)
+              ), # end of the tabitem "map"
+  
+      ##-----------
+      ## Map Residuals
+      ##-----------
+      tabItem(tabName = "mapR",uiOutput("mapRUi")
+              )
 )
 )# end of the dashboardbody
   
@@ -132,7 +138,8 @@ shinyjs.browseURL = function(url) {
                 menuItem ("Home", tabName = "home", icon = icon("home"), selected = T),
                 menuItem ("Login/Signup", tabName = "input", icon = icon("sign-in-alt"), selected = F),
                 menuItem ("Readme", tabName = "readme", icon = icon("readme"), selected = F),
-                menuItem ("Map", tabName = "map", icon = icon("map-marker-alt"), selected = F)
+                menuItem ("Map Dams", tabName = "map", icon = icon("map-marker-alt"), selected = F),
+                menuItem ("Map Residulas", tabName = "mapR", icon = icon("map-marker-alt"), selected = F)
               )
 )# end of the dashboardsidebar
 
