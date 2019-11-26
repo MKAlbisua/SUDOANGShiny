@@ -24,6 +24,9 @@ library(leafem)
 
 load("data/dams.spain.RData")
 load("data/altitude.spain.RData")
+load("data/delta.coord.RData")
+load("data/deltagamma.coord.RData")
+
 
 ## ****************************
 ## Function for url
