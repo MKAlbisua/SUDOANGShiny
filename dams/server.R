@@ -138,7 +138,7 @@ function(input, output, session) {
   
   
   ## ********************************************************************************************************************
-  ## MAP BOX
+  ## MAP DAMS BOX
   ## ********************************************************************************************************************
   
   
@@ -369,6 +369,33 @@ function(input, output, session) {
    observeEvent(input$google, {
        js$browseURL(url()$googlemapcoords)
        Sys.sleep(1)                #Short delay of 1 second
+   })
+   
+   
+   ## ********************************************************************************************************************
+   ## MAP RESIDUALS BOX
+   ## ********************************************************************************************************************
+   
+   
+   output$mapRUi <- renderUI ({
+     req(input$okpassword)
+     load("commentsTable.RData")
+     if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
+       fluidRow(
+         column(width = 8,
+                box(width = NULL, status = "primary", solidHeader = TRUE,
+                    leafletOutput("map.R", height = 800)
+                )),
+         column (width = 4,
+                 box(id ="tablebox.R", width = NULL,status = "primary", title = "Table edits",
+                      sliderInput("res", "Residulas", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
+                                              value = round(range(delta.coord$rdelta), digits=2), step = 0.1),
+                      textAreaInput("caption", "", rows = 5, "Type here..." #, width = "1000px"
+                                    ),
+                      helpText("For example: Wrong location, eels transported, etc."))
+                 )
+         )
+     }
    })
 
 }# end of the server
