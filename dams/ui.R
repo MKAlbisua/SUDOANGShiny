@@ -138,11 +138,11 @@ shinyjs.browseURL = function(url) {
               sidebarMenu (
                 width = 200,
                 id = "tabs",
-                menuItem ("Home", tabName = "home", icon = icon("home"), selected = T),
-                menuItem ("Login/Signup", tabName = "input", icon = icon("sign-in-alt"), selected = F),
-                menuItem ("Readme", tabName = "readme", icon = icon("readme"), selected = F),
+                menuItem ("Home", tabName = "home", icon = icon("globe"), selected = T),
+                menuItem ("Login/Signup", tabName = "input", icon = icon("unlock"), selected = F),
+                menuItem ("Readme", tabName = "readme", icon = icon("bookmark"), selected = F),
                 menuItem ("Map Dams", tabName = "map", icon = icon("map-marker-alt"), selected = F),
-                menuItem ("Map Residulas", tabName = "mapR", icon = icon("map-marker-alt"), selected = F)
+                menuItem ("Map Residuals", tabName = "mapR", icon = icon("adjust"), selected = F)
               )
 )# end of the dashboardsidebar
 
