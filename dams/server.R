@@ -415,6 +415,16 @@ function(input, output, session) {
    }, ignoreNULL = FALSE)
    
    
+   ## Map residuals
+   
+   output$map.R<- renderLeaflet({
+     
+     pal.R<- colorNumeric(palette = "BrBG", domain = delta.coord$rdelta)
+     
+     leaflet(delta.coord) %>% addTiles()%>%
+       setView(lng = -5,lat =  41, zoom = 6)%>% 
+       addLegend(position = "bottomright",pal = pal.R, values = ~ rdelta)
+   })
    
 
 }# end of the server
