@@ -22,7 +22,7 @@ library(leafem)
 ## Data
 ## ****************************
 
-load("data/dams.spain.Rdata")
+load("data/dams.spain.RData")
 load("data/altitude.spain.RData")
 
 ## ****************************
@@ -290,12 +290,12 @@ function(input, output, session) {
   dams.coord<-dams.spain.coord[,c(25:26, 8, 16, 4:6, 10,19,22,21)]
   
   
-  ## Reactive data to click on map
-  dam <- eventReactive(input$map_marker_click, {
-    click <- input$map_marker_click
-    dam <-dams.coord[dams.coord$lat == click$lat & dams.coord$long ==click$lng,]  
-    dam <- dam [,]
-  })
+   ## Reactive data to click on map
+   dam <- eventReactive(input$map_marker_click, {
+     click <- input$map_marker_click
+     dam <-dams.coord[dams.coord$lat == click$lat & dams.coord$long ==click$lng,]  
+     dam <- dam [,]
+   })
   
   ## Returns rhandsontable type objetc - editable excel type grid data
   output$table <-renderRHandsontable({
