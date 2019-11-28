@@ -386,18 +386,20 @@ function(input, output, session) {
        fluidRow(
          column(width = 8,
                 box(width = NULL, status = "primary", solidHeader = TRUE,
-                    leafletOutput("map.R", height = 800)
+                    leafletOutput("map.R", height = 700)
                 )),
          column (width = 4,
                  box(id ="tablebox.R", width = NULL,status = "primary", title = "Residual edits",
-                  radioButtons ("dataset", "Plot",  
-                                choices = c("Presence/absence","Density" )),   
-                  sliderInput("res", "Residuals", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
-                                              value = round(range(delta.coord$rdelta), digits=2), step = 0.1),
-                  textAreaInput("caption", "", rows = 5, "Type here..." #, width = "1000px"
-                                    ),
-                  helpText("For example: Wrong location, eels transported, etc."), 
-                  actionButton("update", "Update View"))
+                     radioButtons("dataset", "Plot", choices = c("Presence/absence", "Density")),
+                     conditionalPanel( condition = "input.dataset == 'Presence/absence'",
+                                       sliderInput("res", "Residulas", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
+                                                   value = round(range(delta.coord$rdelta), digits=2), step = 0.1)),
+                     conditionalPanel( condition = "input.dataset == 'Density'",
+                                       sliderInput("res.g", "Residulas", round(min(deltagamma.coord$rdeltagamma), digits=2), round(max(deltagamma.coord$rdeltagamma), digits=2),
+                                                   value = round(range(deltagamma.coord$rdeltagamma), digits=2), step = 0.1)),
+                     textAreaInput("caption", "", rows = 5, "Type here..." #, width = "1000px"
+                     ),
+                     helpText("Note: for example, Wrong location, eels transported, etc."))
                  )
          )
      }
@@ -407,24 +409,77 @@ function(input, output, session) {
    # Return the requested dataset ----
    # updated when the user clicks the button
    
-   residuals<- eventReactive(input$update, {
+   dat<- reactive ({
      switch(input$dataset,
-            "Presence/absence" = delta,
-            "Density" = deltagamma
-            )
-   }, ignoreNULL = FALSE)
+            "Presence/absence" = delta.coord,
+            "Density" = deltagamma.coord)
+   })
+   
+   df <- reactive({
+     
+     if (input$dataset == "Presence/absence"){
+       aux <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
+     else{
+       if (input$dataset == "Density"){
+         aux <- dat()[dat()$rdeltagamma >= input$res.g[1] & dat()$rdeltagamma <= input$res.g[2],]}
+     }
+     aux
+     
+   })
    
    
    ## Map residuals
    
    output$map.R<- renderLeaflet({
      
-     pal.R<- colorNumeric(palette = "BrBG", domain = delta.coord$rdelta)
-     
-     leaflet(delta.coord) %>% addTiles()%>%
-       setView(lng = -5,lat =  41, zoom = 6)%>% 
-       addLegend(position = "bottomright",pal = pal.R, values = ~ rdelta)
+     leaflet() %>% addTiles()%>%
+       setView(lng = -5,lat =  41, zoom = 6) 
    })
+   
+   
+   # observe({
+   #   if (input$dataset == "Presence/absence"){
+   #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
+   #     leafletProxy("map", data=df())%>%
+   #       clearMarkers()%>% 
+   #       addCircleMarkers(#radius = ~ round(rdelta*10, digits=2), 
+   #         radius = 7,
+   #         popup = ~ as.character(round(rdelta, digits = 2)),
+   #         stroke =F,
+   #         fillOpacity = 0.9,
+   #         color = ~pal(rdelta) )
+   #   }
+   #   if(input$dataset == "Density"){
+   #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
+   #     leafletProxy("map", data=df())%>%
+   #       clearMarkers()%>% 
+   #       addCircleMarkers(#radius = ~ round(rdeltagamma*10, digits=2),
+   #         radius = 7,
+   #         popup = ~ as.character(round(rdeltagamma, digits =2)),
+   #         stroke = F,
+   #         fillOpacity = 0.9,
+   #         color = ~pal(rdeltagamma))
+   #   }
+   # })
+   # 
+   # 
+   # 
+   # ## A separate observer is used to create the legends as needed:
+   # 
+   # observe({
+   #   proxy<-leafletProxy ("map")
+   #   proxy%>%clearControls()
+   #   
+   #   if (input$dataset == "Presence/absence"){
+   #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
+   #     values <- round(delta.coord$rdelta, digits =2)}
+   #   
+   #   if(input$dataset == "Density"){
+   #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
+   #     values <- round(deltagamma.coord$rdeltagamma, digits=2)}
+   #   
+   #   proxy%>%addLegend( "bottomleft", pal = pal, values = values)
+   # })# end of the observer
    
 
 }# end of the server
