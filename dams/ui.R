@@ -17,6 +17,7 @@ library(sf)
 library(rhandsontable)
 library(leaflet.extras)
 library(leafem)
+library(shinyWidgets)
 
 ## ****************************
 ## Data
