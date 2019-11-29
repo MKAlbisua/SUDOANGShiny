@@ -442,6 +442,9 @@ function(input, output, session) {
    
    
    df.res <- reactive({
+     
+     validate(need(input$dataset,"please choose a type of residuals"))
+     
      if (input$dataset == "Presence/absence"){
     aux <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
      else{
@@ -461,55 +464,50 @@ function(input, output, session) {
    ## Map residuals
    
     output$map.R<- renderLeaflet({
-      if(input$dataset == "Presence/absence"){
-      leaflet(delta.coord) %>% addTiles()%>%setView(lng = -3,lat =  41, zoom = 5)
-   #   leaflet(df.res()) %>% addTiles()%>%
-   #     setView(lng = -3,lat =  41, zoom = 5) %>%
-   #     addCircleMarkers( lat = ~lat, lng = ~long )
-      }
-      if(input$dataset == "Density"){
-        leaflet(deltagamma.coord) %>% addTiles()%>%setView(lng = -3,lat =  41, zoom = 5)
-      }
+
+      leaflet(dat()) %>% addTiles()%>%
+        setView(lng = -3,lat =  41, zoom = 5) #%>%
+       #addCircleMarkers( lat = ~lat, lng = ~long )
     })
    
     
-   # observe({
-   #     leafletProxy("map.R", df.res()) %>%
-   #       addCircleMarkers(lat = ~lat, lng = ~long )
-   #   
-   #   })
+    # observe({
+    #     leafletProxy("map.R", df.res()) %>%
+    #       addCircleMarkers(lat = ~lat, lng = ~long )
+    #   
+    #   })
 
  
  
-   # observe({
-   #   
-   #   aux<-leafletProxy("map.R", data=df.res())%>%clearMarkers()
-   #   
-   #   if (input$dataset == "Presence/absence"){
-   #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
-   #     aux%>%
-   #       #leafletProxy("map", data = df())%>%clearMarkers()%>%
-   #       #mapres %>%
-   #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2), 
-   #                        radius = 7,
-   #                        popup = ~ as.character(round(rdelta, digits = 2)),
-   #                        stroke =F,
-   #                        fillOpacity = 0.9,
-   #                        color = ~pal(rdelta) )
-   #   }
-   #   if(input$dataset == "Density"){
-   #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
-   #     aux%>%
-   #       #leafletProxy("map", data=df())%>%clearMarkers()%>%
-   #       #mapres%>%  
-   #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
-   #                        radius = 7,
-   #                        popup = ~ as.character(round(rdeltagamma, digits =2)),
-   #                        stroke = F,
-   #                        fillOpacity = 0.9,
-   #                        color = ~pal(rdeltagamma))
-   #   }
-   # })
+   observe({
+
+     aux<-leafletProxy("map.R", data=df.res())%>%clearMarkers()
+
+     if (input$dataset == "Presence/absence"){
+       pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
+       aux%>%
+         #leafletProxy("map", data = df())%>%clearMarkers()%>%
+         #mapres %>%
+         addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2),
+                          radius = 7,
+                          popup = ~ as.character(round(rdelta, digits = 2)),
+                          stroke =F,
+                          fillOpacity = 0.9,
+                          color = ~pal(rdelta) )
+     }
+     if(input$dataset == "Density"){
+       pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
+       aux%>%
+         #leafletProxy("map", data=df())%>%clearMarkers()%>%
+         #mapres%>%
+         addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
+                          radius = 7,
+                          popup = ~ as.character(round(rdeltagamma, digits =2)),
+                          stroke = F,
+                          fillOpacity = 0.9,
+                          color = ~pal(rdeltagamma))
+     }
+   })
 
 
    # ## A separate observer is used to create the legends as needed:
