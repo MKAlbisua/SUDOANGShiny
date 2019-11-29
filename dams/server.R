@@ -261,11 +261,11 @@ function(input, output, session) {
     #addStyleEditor()   %>%
     
     #Polylines layer
-    addPolylines(data = altitude.spain, color = ~ pal.alt(DELTACLASS), weight = 2, group = "outline") %>% #weight = 5 by default; it makes narrower the polyline.
+    addPolylines(data = altitude.spain, color = ~ pal.alt(DELTACLASS), weight = 2, group = "altitude") %>% #weight = 5 by default; it makes narrower the polyline.
     
     #Control  layers
     addLayersControl(
-      overlayGroups = c(names(dams.spain.df),"markers", "outline"),
+      overlayGroups = c(names(dams.spain.df),"markers", "altitude"),
       # overlayGroups = c("<img src= 'www/dam.png' height='20' width='20'>", names(damssf_reproj.df)[1],
       #                "<img src= 'www/greendam.png' height='20' width='20'> names(damssf_reproj.df)[2]",
       #                "<img src= 'www/smalldam.png' height='20' width='20'> names(damssf_reproj.df)[3]"),
@@ -273,7 +273,7 @@ function(input, output, session) {
     
     # Legend layers
     addLegend( "bottomleft", pal=pal.dam, values=levels(dams.spain$type))%>%
-    addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "outline")%>%
+    addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "altitude")%>%
     
     #Hide altitude layer by default
     hideGroup("outline")
@@ -413,16 +413,18 @@ function(input, output, session) {
                 )),
          column (width = 4,
                  box(id ="tablebox.R", width = NULL,status = "primary", title = "Residual edits",
-                     radioButtons("dataset", "Plot", choices = c("Presence/absence", "Density"), selected= "Presence/absence"),
+                     radioButtons("dataset", "Plot", choices = c("Presence/absence" = "Presence/absence", "Density" = "Density"), selected= "Presence/absence"),
                      conditionalPanel( condition = "input.dataset == 'Presence/absence'",
-                                       sliderInput("res", "Residulas", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
+                                       sliderInput("res", "Residuals", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
                                                    value = round(range(delta.coord$rdelta), digits=2), step = 0.1)),
                      conditionalPanel( condition = "input.dataset == 'Density'",
-                                       sliderInput("res.g", "Residulas", round(min(deltagamma.coord$rdeltagamma), digits=2), round(max(deltagamma.coord$rdeltagamma), digits=2),
+                                       sliderInput("res.g", "Residuals", round(min(deltagamma.coord$rdeltagamma), digits=2), round(max(deltagamma.coord$rdeltagamma), digits=2),
                                                    value = round(range(deltagamma.coord$rdeltagamma), digits=2), step = 0.1)),
                      textAreaInput("caption", "", rows = 5, "Type here..." #, width = "1000px"
-                     ),
-                     helpText("Note: for example, Wrong location, eels transported, etc."))
+                                   ),
+                     helpText("Note: for example, Wrong location, eels transported, etc."),
+                     #test dataset input is ok:
+                     verbatimTextOutput("summary"))
                  )
          )
      }
@@ -438,56 +440,78 @@ function(input, output, session) {
             "Density" = deltagamma.coord)
    })
    
-   df <- reactive({
-     
+   
+   df.res <- reactive({
      if (input$dataset == "Presence/absence"){
-       aux <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
+    aux <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
      else{
-       if (input$dataset == "Density"){
-         aux <- dat()[dat()$rdeltagamma >= input$res.g[1] & dat()$rdeltagamma <= input$res.g[2],]}
+     if (input$dataset == "Density"){
+     aux <- dat()[dat()$rdeltagamma >= input$res.g[1] & dat()$rdeltagamma <= input$res.g[2],]}
      }
      aux
-     
    })
+
+  #test dataset input is ok:
+   output$summary <- renderPrint({
+     summary(df.res())
+   })
+   
    
    
    ## Map residuals
    
-   output$map.R<- renderLeaflet({
-     
-     leaflet(dat()) %>% addTiles()%>%
-       setView(lng = -5,lat =  41, zoom = 6) 
-   })
+    output$map.R<- renderLeaflet({
+      if(input$dataset == "Presence/absence"){
+      leaflet(delta.coord) %>% addTiles()%>%setView(lng = -3,lat =  41, zoom = 5)
+   #   leaflet(df.res()) %>% addTiles()%>%
+   #     setView(lng = -3,lat =  41, zoom = 5) %>%
+   #     addCircleMarkers( lat = ~lat, lng = ~long )
+      }
+      if(input$dataset == "Density"){
+        leaflet(deltagamma.coord) %>% addTiles()%>%setView(lng = -3,lat =  41, zoom = 5)
+      }
+    })
    
+    
+   # observe({
+   #     leafletProxy("map.R", df.res()) %>%
+   #       addCircleMarkers(lat = ~lat, lng = ~long )
+   #   
+   #   })
+
  
  
    # observe({
+   #   
+   #   aux<-leafletProxy("map.R", data=df.res())%>%clearMarkers()
+   #   
    #   if (input$dataset == "Presence/absence"){
    #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
-   #     leafletProxy("map.R", data=df())%>%
-   #       clearMarkers()%>%
-   #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2),
-   #         radius = 7,
-   #         popup = ~ as.character(round(rdelta, digits = 2)),
-   #         stroke =F,
-   #         fillOpacity = 0.9,
-   #         color = ~pal(rdelta) )
+   #     aux%>%
+   #       #leafletProxy("map", data = df())%>%clearMarkers()%>%
+   #       #mapres %>%
+   #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2), 
+   #                        radius = 7,
+   #                        popup = ~ as.character(round(rdelta, digits = 2)),
+   #                        stroke =F,
+   #                        fillOpacity = 0.9,
+   #                        color = ~pal(rdelta) )
    #   }
    #   if(input$dataset == "Density"){
    #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
-   #     leafletProxy("map.R", data=df())%>%
-   #       clearMarkers()%>%
+   #     aux%>%
+   #       #leafletProxy("map", data=df())%>%clearMarkers()%>%
+   #       #mapres%>%  
    #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
-   #         radius = 7,
-   #         popup = ~ as.character(round(rdeltagamma, digits =2)),
-   #         stroke = F,
-   #         fillOpacity = 0.9,
-   #         color = ~pal(rdeltagamma))
+   #                        radius = 7,
+   #                        popup = ~ as.character(round(rdeltagamma, digits =2)),
+   #                        stroke = F,
+   #                        fillOpacity = 0.9,
+   #                        color = ~pal(rdeltagamma))
    #   }
    # })
-   # 
-   # 
-   # 
+
+
    # ## A separate observer is used to create the legends as needed:
    # 
    # observe({
