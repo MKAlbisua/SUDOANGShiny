@@ -496,7 +496,7 @@ function(input, output, session) {
 							#mapres %>%
 							addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2), 
 									radius = 7,
-									popup = ~ popudat,
+									popup = ~ popupdat,
 									stroke =F,
 									fillOpacity = 0.9,
 									color = ~pal(rdelta) )
@@ -508,7 +508,7 @@ function(input, output, session) {
 							#mapres%>%  
 							addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
 									radius = 7,
-									popup = ~ popudat,
+									popup = ~ popupdat,
 									stroke = F,
 									fillOpacity = 0.9,
 									color = ~pal1(rdeltagamma))
