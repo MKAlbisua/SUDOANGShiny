@@ -152,7 +152,9 @@ function(input, output, session) {
           fluidRow(
           column(width = 8,
                box(width = NULL, status = "primary", solidHeader = TRUE,
-                   addSpinner(leafletOutput("map", height = 800), spin = "circle", color = "#E41A1C")
+                   addSpinner(leafletOutput("map", height = 800), spin = "circle", color = "#E41A1C")#,
+                   #br(),
+                   #checkboxInput("show.alt", "Show/hide altitude layer", value = FALSE)
                )),
           column (width = 4,
                box(id ="tablebox", width = NULL,status = "primary", title = "Table edits",
@@ -185,15 +187,16 @@ function(input, output, session) {
   
   output$map <- renderLeaflet({
   
-  ## Color palettes dams and plylines
-  
+
+  ## Color palettes dams and polylines
   pal.dam<-colorFactor("Dark2", levels(dams.spain$type))
   
-  collist<-c( "#D1E5F0",  "#2166AC", "#B2182B", "#FDDBC7")
+  
   altitude.spain$DELTACLASS<- factor(altitude.spain$DELTACLASS, 
                                      levels=c(">300",  ">50" , ">10"  ,">0"),
                                      labels=c("Cumheightdam-altitude > 300 m", "Cumheightdam-altitude > 50 m", "Cumheightdam-altitude > 10 m", 
                                               "Cumheightdam-altitude > 0 m"))
+  collist<-c( "#D1E5F0",  "#2166AC", "#B2182B", "#FDDBC7")
   pal.alt<-colorFactor(collist, levels(altitude.spain$DELTACLASS))
 
   
@@ -266,17 +269,16 @@ function(input, output, session) {
       # overlayGroups = c("<img src= 'www/dam.png' height='20' width='20'>", names(damssf_reproj.df)[1],
       #                "<img src= 'www/greendam.png' height='20' width='20'> names(damssf_reproj.df)[2]",
       #                "<img src= 'www/smalldam.png' height='20' width='20'> names(damssf_reproj.df)[3]"),
-      options = layersControlOptions(collapsed = T))%>% 
-    
-    #Hide altitude layer by default
-    hideGroup("outline")%>%
+      options = layersControlOptions(collapsed = T))%>%
     
     # Legend layers
     addLegend( "bottomleft", pal=pal.dam, values=levels(dams.spain$type))%>%
-    addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "outline")
-  
-})
+    addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "outline")%>%
+    
+    #Hide altitude layer by default
+    hideGroup("outline")
 
+})
   
 
   
@@ -407,7 +409,7 @@ function(input, output, session) {
        fluidRow(
          column(width = 8,
                 box(width = NULL, status = "primary", solidHeader = TRUE,
-                    leafletOutput("map.R", height = 700)
+                    leafletOutput("map.R", height = 800)
                 )),
          column (width = 4,
                  box(id ="tablebox.R", width = NULL,status = "primary", title = "Residual edits",
