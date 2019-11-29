@@ -17,6 +17,7 @@ library(sf)
 library(rhandsontable)
 library(leaflet.extras)
 library(leafem)
+library(shinyWidgets)
 
 ## ****************************
 ## Data
@@ -151,7 +152,7 @@ function(input, output, session) {
           fluidRow(
           column(width = 8,
                box(width = NULL, status = "primary", solidHeader = TRUE,
-                   leafletOutput("map", height = 800)
+                   addSpinner(leafletOutput("map", height = 800), spin = "circle", color = "#E41A1C")
                )),
           column (width = 4,
                box(id ="tablebox", width = NULL,status = "primary", title = "Table edits",
@@ -184,9 +185,17 @@ function(input, output, session) {
   
   output$map <- renderLeaflet({
   
-  ## Color palette
-  pal<-colorFactor("RdBu", levels(dams.spain$type))
-  pal2<-colorFactor("RdBu", levels(altitude.spain$DELTACLASS))
+  ## Color palettes dams and plylines
+  
+  pal.dam<-colorFactor("Dark2", levels(dams.spain$type))
+  
+  collist<-c( "#D1E5F0",  "#2166AC", "#B2182B", "#FDDBC7")
+  altitude.spain$DELTACLASS<- factor(altitude.spain$DELTACLASS, 
+                                     levels=c(">300",  ">50" , ">10"  ,">0"),
+                                     labels=c("Cumheightdam-altitude > 300 m", "Cumheightdam-altitude > 50 m", "Cumheightdam-altitude > 10 m", 
+                                              "Cumheightdam-altitude > 0 m"))
+  pal.alt<-colorFactor(collist, levels(altitude.spain$DELTACLASS))
+
   
 
   ## Poplist
@@ -208,10 +217,9 @@ function(input, output, session) {
 
   ## Map
   l <- leaflet() %>% addTiles() %>%
-    setView(lng = -5,lat =  41, zoom = 6) %>% addMouseCoordinates() %>% addScaleBar ("bottomleft") %>%
-    addPolylines(data = altitude.spain, color = ~ pal2(DELTACLASS), weight = 2) %>% #weight = 5 by default; it makes narrower the polyline.
-    addTiles()%>%
-    addLegend("topleft", title = "Accumulated height (m)", pal = pal2, values = levels(altitude.spain$DELTACLASS))
+    setView(lng = -5,lat =  41, zoom = 6) %>% addMouseCoordinates() %>% addScaleBar ("bottomleft") 
+    #addPolylines(data = altitude.spain, color = ~ pal2(DELTACLASS), weight = 2, group = "outline") %>% #weight = 5 by default; it makes narrower the polyline.
+    #addLegend("topleft", title = "Accumulated height (m)", pal = pal2, values = levels(altitude.spain$DELTACLASS))
   
 
   ## layer control
@@ -225,7 +233,7 @@ function(input, output, session) {
                          #label=~as.character(mag),
                          popup = ~ popuplist.2,
                          group = df,
-                         color = ~ pal(type),
+                         color = ~ pal.dam(type),
                          #opacity= 0.9,
                          fillOpacity = 1,
                          weight = 10,
@@ -237,6 +245,7 @@ function(input, output, session) {
     })
   
   l %>%
+    #Drawtool layer
     addDrawToolbar(
       targetGroup = "markers",
       polylineOptions = FALSE,
@@ -247,17 +256,29 @@ function(input, output, session) {
       editOptions = editToolbarOptions()) %>%
       #editOptions = editToolbarOptions(selectedPathOptions = selectedPathOptions()))  %>%
     #addStyleEditor()   %>%
+    
+    #Polylines layer
+    addPolylines(data = altitude.spain, color = ~ pal.alt(DELTACLASS), weight = 2, group = "outline") %>% #weight = 5 by default; it makes narrower the polyline.
+    
+    #Control  layers
     addLayersControl(
-      overlayGroups = c(names(dams.spain.df),"markers"),
+      overlayGroups = c(names(dams.spain.df),"markers", "outline"),
       # overlayGroups = c("<img src= 'www/dam.png' height='20' width='20'>", names(damssf_reproj.df)[1],
       #                "<img src= 'www/greendam.png' height='20' width='20'> names(damssf_reproj.df)[2]",
       #                "<img src= 'www/smalldam.png' height='20' width='20'> names(damssf_reproj.df)[3]"),
-      options = layersControlOptions(collapsed = T)
-    )%>%
-    addLegend( "bottomleft", pal=pal, values=levels(dams.spain$type))
+      options = layersControlOptions(collapsed = T))%>% 
+    
+    #Hide altitude layer by default
+    hideGroup("outline")%>%
+    
+    # Legend layers
+    addLegend( "bottomleft", pal=pal.dam, values=levels(dams.spain$type))%>%
+    addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "outline")
+  
 })
 
   
+
   
   ## ********************************************************************************************************************
   ## EDITABLE TABLE
@@ -390,7 +411,7 @@ function(input, output, session) {
                 )),
          column (width = 4,
                  box(id ="tablebox.R", width = NULL,status = "primary", title = "Residual edits",
-                     radioButtons("dataset", "Plot", choices = c("Presence/absence", "Density")),
+                     radioButtons("dataset", "Plot", choices = c("Presence/absence", "Density"), selected= "Presence/absence"),
                      conditionalPanel( condition = "input.dataset == 'Presence/absence'",
                                        sliderInput("res", "Residulas", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
                                                    value = round(range(delta.coord$rdelta), digits=2), step = 0.1)),
@@ -432,17 +453,18 @@ function(input, output, session) {
    
    output$map.R<- renderLeaflet({
      
-     leaflet() %>% addTiles()%>%
+     leaflet(dat()) %>% addTiles()%>%
        setView(lng = -5,lat =  41, zoom = 6) 
    })
    
-   
+ 
+ 
    # observe({
    #   if (input$dataset == "Presence/absence"){
    #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
-   #     leafletProxy("map", data=df())%>%
-   #       clearMarkers()%>% 
-   #       addCircleMarkers(#radius = ~ round(rdelta*10, digits=2), 
+   #     leafletProxy("map.R", data=df())%>%
+   #       clearMarkers()%>%
+   #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2),
    #         radius = 7,
    #         popup = ~ as.character(round(rdelta, digits = 2)),
    #         stroke =F,
@@ -451,9 +473,9 @@ function(input, output, session) {
    #   }
    #   if(input$dataset == "Density"){
    #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
-   #     leafletProxy("map", data=df())%>%
-   #       clearMarkers()%>% 
-   #       addCircleMarkers(#radius = ~ round(rdeltagamma*10, digits=2),
+   #     leafletProxy("map.R", data=df())%>%
+   #       clearMarkers()%>%
+   #       addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
    #         radius = 7,
    #         popup = ~ as.character(round(rdeltagamma, digits =2)),
    #         stroke = F,
@@ -467,19 +489,19 @@ function(input, output, session) {
    # ## A separate observer is used to create the legends as needed:
    # 
    # observe({
-   #   proxy<-leafletProxy ("map")
+   #   proxy<-leafletProxy ("map.R")
    #   proxy%>%clearControls()
-   #   
+   # 
    #   if (input$dataset == "Presence/absence"){
    #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
    #     values <- round(delta.coord$rdelta, digits =2)}
-   #   
+   # 
    #   if(input$dataset == "Density"){
    #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
    #     values <- round(deltagamma.coord$rdeltagamma, digits=2)}
-   #   
+   # 
    #   proxy%>%addLegend( "bottomleft", pal = pal, values = values)
    # })# end of the observer
-   
+
 
 }# end of the server
