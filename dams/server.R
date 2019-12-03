@@ -76,7 +76,9 @@ function(input, output, session) {
 				if (nrow(subset(commentsTable, user==input$user & password==input$pass))==0)
 					showModal(modalDialog("Password incorrect"))
 				else
-					showModal(modalDialog(paste("Welcome", input$user)))
+					showModal(modalDialog(paste("Welcome", input$user), 
+					                      easyClose = TRUE,
+					                      footer = NULL))
 			})
 	
 	##-------
@@ -159,11 +161,12 @@ function(input, output, session) {
 				if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
 					fluidRow(
 							column(width = 8,
-									box(width = NULL, status = "primary", solidHeader = TRUE,
-											addSpinner(leafletOutput("map", height = 800), spin = "circle", color = "#E41A1C")#,
-									#br(),
-									#checkboxInput("show.alt", "Show/hide altitude layer", value = FALSE)
-									)),
+							       box(width = NULL, status = "primary", solidHeader = TRUE,
+							           #addSpinner(leafletOutput("map", height = 800), spin = "circle", color = "#E41A1C")#,
+							           leafletOutput("map", height = 800)
+							           #br(),
+							           #checkboxInput("show.alt", "Show/hide altitude layer", value = FALSE)
+							       )),
 							column (width = 4,
 									box(id ="tablebox", width = NULL,status = "primary", title = "Table edits",
 											#tableOutput("table")
