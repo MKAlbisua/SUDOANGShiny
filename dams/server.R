@@ -210,20 +210,20 @@ function(input, output, session) {
 				
 				
 				## Poplist
-				dams.spain$popuplist.2 <-paste0( "Obstacle name: "
-						, dams.spain$obs_name
-						, "<br>"
-						,"Obstacle height: "
-						, dams.spain$obs_height
-						, "<br>"
-						, "Fish pass type: "
-						, dams.spain$fishway_type_name
-						, "<br>"
-						, "Fish pass available for eels: "
-						, dams.spain$obs_eel_pass
-						, "<br>"
-						, "Data source: "
-						, dams.spain$datasource
+				dams.spain$popuplist.2 <-paste0( "<b>", "Obstacle name: ", "</b>"
+				                                 , dams.spain$obs_name
+				                                 , "<br>"
+				                                 ,"<b>","Obstacle height: ","</b>"
+				                                 , dams.spain$obs_height
+				                                 , "<br>"
+				                                 ,"<b>", "Fish pass type: ","</b>"
+				                                 , dams.spain$fishway_type_name
+				                                 , "<br>"
+				                                 ,"<b>", "Fish pass available for eels: ","</b>"
+				                                 , dams.spain$obs_eel_pass
+				                                 , "<br>"
+				                                 ,"<b>", "Data source: ","</b>"
+				                                 , dams.spain$datasource
 				)
 				
 				## Map
