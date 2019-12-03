@@ -284,7 +284,7 @@ function(input, output, session) {
 						addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "altitude")%>%
 						
 						#Hide altitude layer by default
-						hideGroup("outline")
+						hideGroup("altitude")
 				
 			})
 	
@@ -421,7 +421,7 @@ function(input, output, session) {
                     leafletOutput("map.R", height = 800)
                 )),
          column (width = 4,
-                 box(id ="tablebox.R1", width = NULL,status = "primary", title = "Residuals data",
+                 box(id ="tablebox.R", width = NULL,status = "primary", title = "Residuals data",
                      radioButtons("dataset", "Plot", choices = c("Presence/absence" = "Presence/absence", "Density" = "Density"), selected= "Presence/absence"),
                      conditionalPanel( condition = "input.dataset == 'Presence/absence'",
                                        sliderInput("res", "Residuals", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
@@ -429,17 +429,17 @@ function(input, output, session) {
                      conditionalPanel( condition = "input.dataset == 'Density'",
                                        sliderInput("res.g", "Residuals", round(min(deltagamma.coord$rdeltagamma), digits=2), round(max(deltagamma.coord$rdeltagamma), digits=2),
                                                    value = round(range(deltagamma.coord$rdeltagamma), digits=2), step = 0.1))
-                     ),
+                 ),
                  box(id ="tablebox.R2", width = NULL,status = "primary", title = "Residual edits",
                      br(),
                      rHandsontableOutput("table.R"),
-                     br(),
-                     helpText("Note: For example, wrong location, eels transported, ..."), 
+                     bsTooltip("table.R", "Comment on the data, for example, wrong location, eels transported...",
+                               "right", options = list(container = "body")),
                      br(),
                      actionButton("saveRes", "Save edits")
-                    )
-                )
+                 )
          )
+       )
      }
    })
    
