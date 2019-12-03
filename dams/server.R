@@ -444,257 +444,154 @@ function(input, output, session) {
    })
    
    
-   # Return the requested dataset ----
-   # updated when the user clicks the button
+   #show/hide table based on nrow(resid()) 
+   observe({
+     shinyjs::hide(id ="tablebox.R2")
+     if(nrow(resid())!=0)
+       shinyjs::show(id = "tablebox.R2")
+   })
    
+   
+   # Return the requested dataset 
    dat<- reactive ({
      switch(input$dataset,
             "Presence/absence" = delta.coord,
             "Density" = deltagamma.coord)
    })
    
-   
-   df.res <- reactive({
+   # Return the filtered dataset by the user 
+   df <- reactive({
      
-     validate(need(input$dataset,"please choose a type of residuals"))
+     validate(need(input$dataset,"please choose a type of residuals")) # this is needed i do not know why
      
      if (input$dataset == "Presence/absence"){
-    aux <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
+       aux1 <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
      else{
-     if (input$dataset == "Density"){
-     aux <- dat()[dat()$rdeltagamma >= input$res.g[1] & dat()$rdeltagamma <= input$res.g[2],]}
+       if (input$dataset == "Density"){
+         aux1 <- dat()[dat()$rdeltagamma >= input$res.g[1] & dat()$rdeltagamma <= input$res.g[2],]}
      }
-     aux
-   })
-
-  #test dataset input is ok:
-   output$summary <- renderPrint({
-     summary(df.res())
+     aux1
+     
    })
    
    
+   ## lat long needs to be character fro map_input_marker_click 
    
-   ## Map residuals
+   df.c <- reactive ({
+     db<-df()
+     db$lat<- as.character(db$lat)
+     db$long <- as.character(db$long)
+     st_geometry(db) <- NULL # otherwise class sf3 json error
+     db
+   })
    
-    output$map.R<- renderLeaflet({
-
-      leaflet(dat()) %>% addTiles()%>%
-        setView(lng = -3,lat =  41, zoom = 5) #%>%
-       #addCircleMarkers( lat = ~lat, lng = ~long )
-    })
    
-    
-    # observe({
-    #     leafletProxy("map.R", df.res()) %>%
-    #       addCircleMarkers(lat = ~lat, lng = ~long )
-    #   
-    #   })
-
- 
- 
+   ## -----------------------
+   ## Render Map residuals 
+   ## ----------------------
+   
+   output$map.R<- renderLeaflet({
+     leaflet() %>% addTiles()%>%
+       setView(lng = -2.5,lat =  44, zoom = 5) 
+   })
+   
+   
+   ## a separate observer for adding 
+   
    observe({
-
-     aux<-leafletProxy("map.R", data=df.res())%>%clearMarkers()
-
+     
+     aux<-leafletProxy("map.R", data=df())%>%clearMarkers()
+     
      if (input$dataset == "Presence/absence"){
-       pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
+       pal.d<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
        aux%>%
-         #leafletProxy("map", data = df())%>%clearMarkers()%>%
-         #mapres %>%
          addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2),
                           radius = 7,
-                          popup = ~ as.character(round(rdelta, digits = 2)),
+                          popup = ~ popupdat,
                           stroke =F,
-                          fillOpacity = 0.9,
-                          color = ~pal(rdelta) )
+                          fillOpacity = 0.6,
+                          color = ~pal.d(rdelta) )
      }
      if(input$dataset == "Density"){
-       pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
+       pal.g<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
        aux%>%
-         #leafletProxy("map", data=df())%>%clearMarkers()%>%
-         #mapres%>%
          addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
                           radius = 7,
-                          popup = ~ as.character(round(rdeltagamma, digits =2)),
+                          popup = ~ popupdat,
                           stroke = F,
-                          fillOpacity = 0.9,
-                          color = ~pal(rdeltagamma))
+                          fillOpacity = 0.6,
+                          color = ~pal.g(rdeltagamma))
      }
    })
-
-
-   # ## A separate observer is used to create the legends as needed:
-   # 
-   # observe({
-   #   proxy<-leafletProxy ("map.R")
-   #   proxy%>%clearControls()
-   # 
-   #   if (input$dataset == "Presence/absence"){
-   #     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
-   #     values <- round(delta.coord$rdelta, digits =2)}
-   # 
-   #   if(input$dataset == "Density"){
-   #     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
-   #     values <- round(deltagamma.coord$rdeltagamma, digits=2)}
-   # 
-   #   proxy%>%addLegend( "bottomleft", pal = pal, values = values)
-   # })# end of the observer
-
-
-	
-	## ********************************************************************************************************************
-	## Google maps 
-	## ********************************************************************************************************************
-	
-	## reactive url data.frame
-	dams.spain.url<-dams.spain.coord[,c(24:26)]
-	
-	## Reactive url to click on map
-	url <- eventReactive(input$map_marker_click, {
-				click <- input$map_marker_click
-				url <-dams.spain.url[dams.spain.url$lat == click$lat & dams.spain.url$long == click$lng,]
-				url <- url [,]
-			})
-	
-	
-	## Open the browser with the url
-	observeEvent(input$google, {
-				js$browseURL(url()$googlemapcoords)
-				Sys.sleep(1)                #Short delay of 1 second
-			})
-	
-	
-	## ********************************************************************************************************************
-	## MAP RESIDUALS BOX
-	## ********************************************************************************************************************
-	
-	
-	output$mapRUi <- renderUI ({
-				req(input$okpassword)
-				load("commentsTable.RData")
-				if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
-					fluidRow(
-							column(width = 8,
-									box(width = NULL, status = "primary", solidHeader = TRUE,
-											leafletOutput("map.R", height = 800)
-									)),
-							column (width = 4,
-									box(id ="tablebox.R", width = NULL,status = "primary", title = "Residual edits",
-											radioButtons("dataset", "Plot", choices = c("Presence/absence" = "Presence/absence", "Density" = "Density"), selected= "Presence/absence"),
-											conditionalPanel( condition = "input.dataset == 'Presence/absence'",
-													sliderInput("res", "Residuals", round(min(delta.coord$rdelta), digits=2), round(max(delta.coord$rdelta), digits=2),
-															value = round(range(delta.coord$rdelta), digits=2), step = 0.1)),
-											conditionalPanel( condition = "input.dataset == 'Density'",
-													sliderInput("res.g", "Residuals", round(min(deltagamma.coord$rdeltagamma), digits=2), round(max(deltagamma.coord$rdeltagamma), digits=2),
-															value = round(range(deltagamma.coord$rdeltagamma), digits=2), step = 0.1)),
-											textAreaInput("caption", "", rows = 5, "Type here..." #, width = "1000px"
-											),
-											helpText("Note: for example, Wrong location, eels transported, etc."),
-											#test dataset input is ok:
-											verbatimTextOutput("summary"))
-							)
-					)
-				}
-			})
-	
-	
-	# Return the requested dataset ----
-	# updated when the user clicks the button
-	
-	dat<- reactive ({
-				switch(input$dataset,
-						"Presence/absence" = delta.coord,
-						"Density" = deltagamma.coord)
-			})
-	
-	
-	df.res <- reactive({
-				validate(need(input$dataset,"please choose a type of residuals"))
-				if (input$dataset == "Presence/absence"){
-					aux <- dat()[dat()$rdelta >= input$res[1] & dat()$rdelta <= input$res[2],]}
-				else{
-					if (input$dataset == "Density"){
-						aux <- dat()[dat()$rdeltagamma >= input$res.g[1] & dat()$rdeltagamma <= input$res.g[2],]}
-				}
-				aux
-			})
-	
-	#test dataset input is ok:
-	output$summary <- renderPrint({
-				summary(df.res())
-			})
-	
-	
-	
-	## Map residuals
-	
-	output$map.R<- renderLeaflet({
-				#if(input$dataset == "Presence/absence"){
-				#leaflet(delta.coord) %>% addTiles()%>%setView(lng = -3,lat =  41, zoom = 5)
-				isolate(leaflet(dat()) %>% addTiles()%>%
-						setView(lng = -3,lat =  41, zoom = 5) %>%
-						addCircleMarkers( lat = ~lat, lng = ~long )
-		)
-				#}
-				#if(input$dataset == "Density"){
-				# leaflet(deltagamma.coord) %>% addTiles()%>%setView(lng = -3,lat =  41, zoom = 5)
-				#}
-			})
-	
-	
-	
-	
-	
-	
-	
-	observe({    
-				aux<-leafletProxy("map.R", data=df.res())%>%clearMarkers()
-				
-				if (input$dataset == "Presence/absence"){
-					
-					pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
-					aux%>%
-							#leafletProxy("map", data = df())%>%clearMarkers()%>%
-							#mapres %>%
-							addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdelta*10, digits=2), 
-									radius = 7,
-									popup = ~ popupdat,
-									stroke =F,
-									fillOpacity = 0.9,
-									color = ~pal(rdelta) )
-				}
-				if(input$dataset == "Density"){
-					pal1<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
-					aux%>%
-							#leafletProxy("map", data=df())%>%clearMarkers()%>%
-							#mapres%>%  
-							addCircleMarkers(lat=~lat, lng=~long,#radius = ~ round(rdeltagamma*10, digits=2),
-									radius = 7,
-									popup = ~ popupdat,
-									stroke = F,
-									fillOpacity = 0.9,
-									color = ~pal1(rdeltagamma))
-				}
-			})
-	
-	
-	 ## A separate observer is used to create the legends as needed:
-	 
-	 observe({
-	   proxy<-leafletProxy ("map.R")
-	   proxy%>%clearControls()
-		 validate(need(input$dataset,"please choose a type of residuals"))
-	   if (input$dataset == "Presence/absence"){
-	     pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
-	     values <- round(delta.coord$rdelta, digits =2)}
-	 
-	   if(input$dataset == "Density"){
-	     pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
-	     values <- round(deltagamma.coord$rdeltagamma, digits=2)}
-	 
-	   proxy%>%addLegend( "bottomleft", pal = pal, values = values)
-	 })# end of the observer
-	
-	
-
+   
+   
+   ## A separate observer is used to create the legends as needed:
+   
+   observe({
+     
+     proxy<-leafletProxy ("map.R", data=df())%>%clearControls()
+     
+     if (input$dataset == "Presence/absence"){
+       pal<- colorNumeric(palette = "RdYlBu", domain = delta.coord$rdelta)
+       values <- round(delta.coord$rdelta, digits =2)}
+     
+     if(input$dataset == "Density"){
+       pal<- colorNumeric(palette = "BrBG", domain = deltagamma.coord$rdeltagamma)
+       values <- round(deltagamma.coord$rdeltagamma, digits=2)}
+     
+     proxy%>%addLegend( "bottomleft", pal = pal, values = values)
+   })
+   
+   
+   ## Reactive data to click on map 
+   
+   resid <- eventReactive(input$map.R_marker_click, {
+     click <- input$map.R_marker_click
+     resid <- df.c()[df.c()$lat == click$lat & df.c()$long==click$lng,]  
+     resid <- resid [,]
+   })
+   
+   
+   ## ------------------------------------------
+   ## Returns rhandsontable type objetc - editable excel type grid data
+   ## ------------------------------------------
+   
+   
+   output$table.R <-renderRHandsontable({
+     
+     dt <-resid()
+     
+     if(input$dataset == "Presence/absence"){
+       
+       dt<- dt[ , !(names(dt) %in% c( "lat", "long", "lat1", "lng1", "rdelta","popupdat", "residuals", "geometry"))]
+       dt$Comment<- "Type here whether there is a wrong location or eels transport..."
+     }
+     
+     if(input$dataset == "Density"){
+       
+       dt<- dt[ , !(names(dt) %in% c( "pdelta", "rdelta","rgamma","pgamma", "pdeltagamma","rdeltagamma","Npred", "rN","lat", "long", "lat1", "lng1", "rdelta","popupdat", "residuals", "geometry"))]
+       dt$Comment<- "Type here whether there is a wrong location or eels transport..."
+     }
+     rhandsontable(t(dt), rowHeaderWidth = 200)%>%
+       hot_cols(colWidths = 200) # converst R dataframe to rhandsontable object and transpose for view
+   })
+   
+   
+   
+   ## Add user name to the edits of residuals
+   ## On click on button the data will be save to the working directory
+   observeEvent(input$saveRes, {
+     if (input$dataset == "Presence/absence"){
+       write.table (cbind(t(hot_to_r(input$table.R)),input$user), 
+                    file = "data/datardeltaedits.csv", 
+                    append = T, row.names = F, sep = ",", col.names = F)
+       
+     }
+     if (input$dataset == "Density"){
+       write.table (cbind(t(hot_to_r(input$table.R)),input$user), 
+                    file = "data/datardeltagammaedits.csv", 
+                    append = T, row.names = F, sep = ",", col.names = F)
+     }
+   })
+   
 }# end of the server
