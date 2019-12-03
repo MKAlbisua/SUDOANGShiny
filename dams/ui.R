@@ -9,6 +9,7 @@
 ## ****************************
 library(shiny)
 library(shinyjs)
+library(shinyBS)
 library(shinydashboard)
 library(leaflet)
 library(tidyverse)
