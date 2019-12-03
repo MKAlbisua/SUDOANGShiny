@@ -27,8 +27,13 @@ library(shinyWidgets)
 load("data/dams.spain.RData")
 load("data/altitude.spain.RData")
 load("data/delta.coord.RData")
+#delta.coord <- delta.coord[,c( "lat", "long", "lat1", "lng1", "popupdat", "residuals", "rdelta")]
+#save(delta.coord, file="data/delta.coord.RData")
 load("data/deltagamma.coord.RData")
-
+#deltagamma.coord <- deltagamma.coord[,c( "lat", "long", "lat1", "lng1", "popupdat","rdeltagamma")]
+#save(deltagamma.coord, file="data/deltagamma.coord.RData")
+deltagamma.coord$rdeltagamma <- round(deltagamma.coord$rdeltagamma,2)
+delta.coord$rdelta <- round(delta.coord$rdelta, 2)
 ## ****************************
 ## Function for url
 ## ****************************
@@ -137,6 +142,7 @@ function(input, output, session) {
 				req(input$okpassword)
 				load("commentsTable.RData")
 				if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
+
 				  fluidRow(
 				    #column (
 				    tabBox(id="tab.read",width = 12,
@@ -167,6 +173,7 @@ function(input, output, session) {
 							           #br(),
 							           #checkboxInput("show.alt", "Show/hide altitude layer", value = FALSE)
 							       )),
+
 							column (width = 4,
 									box(id ="tablebox", width = NULL,status = "primary", title = "Table edits",
 											#tableOutput("table")
@@ -213,6 +220,7 @@ function(input, output, session) {
 				
 				
 				## Poplist
+
 				dams.spain$popuplist.2 <-paste0( "<b>", "Obstacle name: ", "</b>"
 				                                 , dams.spain$obs_name
 				                                 , "<br>"
@@ -287,7 +295,8 @@ function(input, output, session) {
 						addLegend("bottomleft", title = "Problem altitude", pal = pal.alt, values = levels(altitude.spain$DELTACLASS), group = "altitude")%>%
 						
 						#Hide altitude layer by default
-						hideGroup("altitude")
+            hideGroup("altitude")
+
 				
 			})
 	
@@ -384,8 +393,6 @@ function(input, output, session) {
 	
 # hot_to_r converst the rhandsontable to R object
 # append = T, bind different edits to the same file
-
-   
    
    ## ********************************************************************************************************************
    ## Google maps 
