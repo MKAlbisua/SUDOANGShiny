@@ -27,13 +27,8 @@ library(shinyWidgets)
 load("data/dams.spain.RData")
 load("data/altitude.spain.RData")
 load("data/delta.coord.RData")
-#delta.coord <- delta.coord[,c( "lat", "long", "lat1", "lng1", "popupdat", "residuals", "rdelta")]
-#save(delta.coord, file="data/delta.coord.RData")
 load("data/deltagamma.coord.RData")
-#deltagamma.coord <- deltagamma.coord[,c( "lat", "long", "lat1", "lng1", "popupdat","rdeltagamma")]
-#save(deltagamma.coord, file="data/deltagamma.coord.RData")
-deltagamma.coord$rdeltagamma <- round(deltagamma.coord$rdeltagamma,2)
-delta.coord$rdelta <- round(delta.coord$rdelta, 2)
+
 ## ****************************
 ## Function for url
 ## ****************************
