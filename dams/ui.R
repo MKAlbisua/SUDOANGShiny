@@ -9,6 +9,7 @@
 ## ****************************
 library(shiny)
 library(shinyjs)
+library(shinyBS)
 library(shinydashboard)
 library(leaflet)
 library(tidyverse)
@@ -142,7 +143,7 @@ shinyjs.browseURL = function(url) {
                 menuItem ("Home", tabName = "home", icon = icon("globe"), selected = T),
                 menuItem ("Login/Signup", tabName = "input", icon = icon("unlock"), selected = F),
                 menuItem ("Readme", tabName = "readme", icon = icon("bookmark"), selected = F),
-                menuItem ("Map Dams", tabName = "map", icon = icon("map-marker-alt"), selected = F),
+                menuItem ("Map Dams", tabName = "map", icon = icon("map-marker"), selected = F),
                 menuItem ("Map Residuals", tabName = "mapR", icon = icon("adjust"), selected = F)
               )
 )# end of the dashboardsidebar
