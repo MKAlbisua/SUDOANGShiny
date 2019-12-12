@@ -138,21 +138,20 @@ function(input, output, session) {
 	## README
 	## ********************************************************************************************************************
 	
-	output$readmeUi <- renderUI({
-				req(input$okpassword)
-				load("commentsTable.RData")
-				if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
-
-				  fluidRow(
-				    #column (
-				    tabBox(id="tab.read",width = 12,
-				     tabPanel("Dams",includeHTML ("data/ReadmeSUDOANG.txt")),
-				     tabPanel("Residuals")
-				#)
-				)
-				)
-				}
-			})
+        output$readmeUi <- renderUI({
+	          req(input$okpassword)
+	          load("commentsTable.RData")
+	          if (nrow(subset(commentsTable, user==input$user & password==input$pass))!=0){
+	            fluidRow(
+	              #column (
+	              tabBox(id="tab.read",width = 12,
+	                     tabPanel("Dams",includeHTML ("data/ReadmeSUDOANG_dams.txt")),
+	                     tabPanel("Residuals", includeHTML ("data/ReadmeSUDOANG_residuals.txt"))
+	                     #)
+	              )
+	            )
+	          }
+	        })
 	
 	
 	
