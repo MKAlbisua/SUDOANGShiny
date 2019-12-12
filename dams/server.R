@@ -227,6 +227,8 @@ function(input, output, session) {
 				                                 ,"<b>","Obstacle height: ","</b>"
 				                                 , dams.spain$obs_height
 				                                 , "<br>"
+				                                 ,"<b>", "Obstruction type: ","</b>"
+				                                 , dams.spain$ot_type
 				                                 ,"<b>", "Fish pass type: ","</b>"
 				                                 , dams.spain$fishway_type_name
 				                                 , "<br>"
@@ -332,7 +334,7 @@ function(input, output, session) {
 	
 	
 	## variable into the editable table
-	dams.coord<-dams.spain.coord[,c(25:26, 8, 16, 4:6, 10,19,22,21)]
+	dams.coord<-dams.spain.coord[,c(26:27, 8, 16, 4:6, 10,25,19,22,21)]
 	
 	
 	## Reactive data to click on map
