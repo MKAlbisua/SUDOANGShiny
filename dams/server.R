@@ -400,7 +400,7 @@ function(input, output, session) {
    ## ********************************************************************************************************************
    
    ## reactive url data.frame
-   dams.spain.url<-dams.spain.coord[,c(24:26)]
+   dams.spain.url<-dams.spain.coord[,c(24,26:27)]
    
    ## Reactive url to click on map
    url <- eventReactive(input$map_marker_click, {
