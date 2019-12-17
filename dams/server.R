@@ -333,7 +333,7 @@ function(input, output, session) {
 	
 	
 	## variable into the editable table
-	dams.coord<-dams.spain.coord[,c(26:27, 8, 16, 4:6, 10,25,19,22,21)]
+	dams.coord<-dams.spain.coord[,c(27:28, 8, 5,18, 4, 6,11, 26, 21,24,23)]
 	
 	
 	## Reactive data to click on map
@@ -400,7 +400,7 @@ function(input, output, session) {
    ## ********************************************************************************************************************
    
    ## reactive url data.frame
-   dams.spain.url<-dams.spain.coord[,c(24,26:27)]
+	dams.spain.url<-dams.spain.coord[,c(17,27:28)]
    
    ## Reactive url to click on map
    url <- eventReactive(input$map_marker_click, {
@@ -412,7 +412,7 @@ function(input, output, session) {
 
    ## Open the browser with the url
    observeEvent(input$google, {
-       js$browseURL(url()$googlemapcoords)
+     js$browseURL(url()$googlemapscoods)
        Sys.sleep(1)                #Short delay of 1 second
    })
    
